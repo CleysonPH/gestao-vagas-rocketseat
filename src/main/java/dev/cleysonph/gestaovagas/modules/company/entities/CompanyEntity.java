@@ -1,4 +1,4 @@
-package dev.cleysonph.gestaovagas.modules.candidate;
+package dev.cleysonph.gestaovagas.modules.company.entities;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,22 +10,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 @Entity
-public class CandidateEntity {
+public class CompanyEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String name;
-
-    @NotBlank
     @Pattern(regexp = "\\S+", message = "cannot contain blank spaces")
     private String username;
 
@@ -35,9 +31,11 @@ public class CandidateEntity {
     @Size(min = 10, max = 100)
     private String password;
 
-    private String description;
+    private String website;
 
-    private String curriculum;
+    private String name;
+
+    private String description;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
