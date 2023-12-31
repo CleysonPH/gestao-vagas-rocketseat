@@ -15,6 +15,10 @@ public class SecurityConfig {
                 .ignoringRequestMatchers("/**")
                 .disable()
             )
+            .authorizeHttpRequests(customizer -> customizer
+                .requestMatchers("/candidates", "/companies").permitAll()
+                .anyRequest().authenticated()
+            )
             .build();
     }
     
