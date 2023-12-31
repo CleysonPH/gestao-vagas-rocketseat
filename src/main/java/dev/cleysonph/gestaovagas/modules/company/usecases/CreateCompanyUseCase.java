@@ -3,6 +3,7 @@ package dev.cleysonph.gestaovagas.modules.company.usecases;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dev.cleysonph.gestaovagas.exceptions.UserFoundException;
 import dev.cleysonph.gestaovagas.modules.company.entities.CompanyEntity;
 import dev.cleysonph.gestaovagas.modules.company.repositories.CompanyRepository;
 
@@ -12,12 +13,12 @@ public class CreateCompanyUseCase {
     @Autowired
     private CompanyRepository companyRepository;
 
-    public void execute(CompanyEntity companyEntity) {
+    public CompanyEntity execute(CompanyEntity companyEntity) {
         companyRepository.findByUsernameOrEmail(companyEntity.getUsername(), companyEntity.getEmail())
             .ifPresent(company -> {
-                throw new RuntimeException("Username or email already exists");
+                throw new UserFoundException();
             });
-        companyRepository.save(companyEntity);
+        return companyRepository.save(companyEntity);
     }
     
 }
