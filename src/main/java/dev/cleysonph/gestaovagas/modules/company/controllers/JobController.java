@@ -18,8 +18,8 @@ public class JobController {
     private CreateJobUseCase createJobUseCase;
 
     @PostMapping
-    public void create(@RequestBody @Valid JobEntity jobEntity) {
-        createJobUseCase.execute(jobEntity);
+    public JobEntity create(@RequestBody @Valid JobEntity jobEntity) {
+        return createJobUseCase.execute(jobEntity);
     }
     
 }
