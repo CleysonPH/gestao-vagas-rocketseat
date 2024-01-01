@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,10 +30,7 @@ public class SecurityCandidateFilter extends OncePerRequestFilter {
         HttpServletResponse response, 
         FilterChain filterChain
     ) throws ServletException, IOException {
-        if (request.getRequestURI().startsWith("auth/candidates")
-            || request.getRequestURI().startsWith("/candidates")
-        ) {
-            SecurityContextHolder.getContext().setAuthentication(null);
+        if (request.getRequestURI().startsWith("/candidates")) {
             var authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
     
             if (isTokenPresent(authorizationHeader)) {
@@ -42,7 +41,17 @@ public class SecurityCandidateFilter extends OncePerRequestFilter {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 } else {
                     request.setAttribute("candidate_id", decodedJWT.getSubject());
-                    var roles = decodedJWT.getClaim("roles").asList(String.class);
+                    var roles = decodedJWT.getClaim("roles")
+                        .asList(String.class)
+                        .stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .toList();
+                    var auth = new UsernamePasswordAuthenticationToken(
+                        decodedJWT.getSubject(), 
+                        null, 
+                        roles
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
         }
