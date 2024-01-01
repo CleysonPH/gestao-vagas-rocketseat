@@ -1,5 +1,8 @@
 package dev.cleysonph.gestaovagas.modules.company.usecases;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import javax.security.sasl.AuthenticationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,7 @@ public class AuthCompanyUseCase {
         return JWT.create()
             .withIssuer("javagas")
             .withSubject(company.getId().toString())
+            .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
             .sign(Algorithm.HMAC256(secretKey));
     }
     
