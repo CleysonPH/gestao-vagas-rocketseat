@@ -4,10 +4,12 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import dev.cleysonph.gestaovagas.modules.candidate.CandidateRepository;
 import dev.cleysonph.gestaovagas.modules.candidate.dtos.ProfileCandidateResponseDTO;
 
+@Service
 public class ProfileCandidateUseCase {
 
     @Autowired

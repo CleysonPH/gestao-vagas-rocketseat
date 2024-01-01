@@ -28,17 +28,22 @@ public class SecurityCandidateFilter extends OncePerRequestFilter {
         HttpServletResponse response, 
         FilterChain filterChain
     ) throws ServletException, IOException {
-        SecurityContextHolder.getContext().setAuthentication(null);
-        var authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (isTokenPresent(authorizationHeader)) {
-            var token = authorizationHeader.replace(TOKEN_PREFIX, "");
-            var decodedJWT = jwtProvider.validateToken(token);
-
-            if (decodedJWT == null) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            } else {
-                request.setAttribute("candidate_id", decodedJWT.getSubject());
+        if (request.getRequestURI().startsWith("auth/candidates")
+            || request.getRequestURI().startsWith("/candidates")
+        ) {
+            SecurityContextHolder.getContext().setAuthentication(null);
+            var authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+    
+            if (isTokenPresent(authorizationHeader)) {
+                var token = authorizationHeader.replace(TOKEN_PREFIX, "");
+                var decodedJWT = jwtProvider.validateToken(token);
+    
+                if (decodedJWT == null) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                } else {
+                    request.setAttribute("candidate_id", decodedJWT.getSubject());
+                    var roles = decodedJWT.getClaim("roles").asList(String.class);
+                }
             }
         }
         filterChain.doFilter(request, response);
