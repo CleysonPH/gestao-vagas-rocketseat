@@ -15,6 +15,12 @@ public class SecurityConfig {
     @Autowired
     private SecurityFilter securityFilter;
 
+    private static final String[] PUBLIC_MATCHERS = {
+        "/auth/**",
+        "/candidates",
+        "/companies"
+    };
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -28,7 +34,7 @@ public class SecurityConfig {
                 .disable()
             )
             .authorizeHttpRequests(customizer -> customizer
-                .requestMatchers("/candidates", "/companies", "auth/**").permitAll()
+                .requestMatchers(PUBLIC_MATCHERS).permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(securityFilter, BasicAuthenticationFilter.class)

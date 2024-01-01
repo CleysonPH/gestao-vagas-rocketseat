@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
-import javax.naming.AuthenticationException;
+import javax.security.sasl.AuthenticationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,13 +37,14 @@ public class AuthCandidateUseCase {
         if (!passwordMatches) {
             throw new AuthenticationException();
         }
+        var expiresIn = Instant.now().plus(Duration.ofHours(2));
         var token = JWT.create()
             .withIssuer("javagas")
             .withSubject(candidate.getId().toString())
-            .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
+            .withExpiresAt(expiresIn)
             .withClaim("roles", List.of("candidate"))
             .sign(Algorithm.HMAC256(secretKey));
-        return new AuthCandidateResponseDTO(token);
+        return new AuthCandidateResponseDTO(token, expiresIn.toEpochMilli());
     }
     
 }
