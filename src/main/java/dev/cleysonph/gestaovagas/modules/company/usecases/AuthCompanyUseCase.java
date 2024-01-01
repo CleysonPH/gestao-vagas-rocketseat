@@ -25,7 +25,7 @@ public class AuthCompanyUseCase {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Value("${security.token.secret}")
+    @Value("${security.token.secret.company}")
     private String secretKey;
 
     public String execute(AuthCompanyDTO authCompanyDTO) throws AuthenticationException {
