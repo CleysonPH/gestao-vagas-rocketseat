@@ -10,3 +10,7 @@ spring:
     properties:
       hibernate:
         "[format_sql]": true
+
+security:
+  token:
+    secret: JAVAGAS_@123

@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .disable()
             )
             .authorizeHttpRequests(customizer -> customizer
-                .requestMatchers("/candidates", "/companies").permitAll()
+                .requestMatchers("/candidates", "/companies", "auth/**").permitAll()
                 .anyRequest().authenticated()
             )
             .build();
