@@ -1,5 +1,7 @@
 package dev.cleysonph.gestaovagas.modules.company.controllers;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.cleysonph.gestaovagas.modules.company.entities.JobEntity;
 import dev.cleysonph.gestaovagas.modules.company.usecases.CreateJobUseCase;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -18,7 +21,9 @@ public class JobController {
     private CreateJobUseCase createJobUseCase;
 
     @PostMapping
-    public JobEntity create(@RequestBody @Valid JobEntity jobEntity) {
+    public JobEntity create(@RequestBody @Valid JobEntity jobEntity, HttpServletRequest request) {
+        var companyId = request.getAttribute("company_id");
+        jobEntity.setCompanyId(UUID.fromString(companyId.toString()));
         return createJobUseCase.execute(jobEntity);
     }
     
