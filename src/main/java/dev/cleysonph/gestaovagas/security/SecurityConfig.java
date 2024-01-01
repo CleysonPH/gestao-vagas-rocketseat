@@ -15,6 +15,9 @@ public class SecurityConfig {
     @Autowired
     private SecurityFilter securityFilter;
 
+    @Autowired
+    private SecurityCandidateFilter securityCandidateFilter;
+
     private static final String[] PUBLIC_MATCHERS = {
         "/auth/**",
         "/candidates",
@@ -38,6 +41,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .addFilterBefore(securityFilter, BasicAuthenticationFilter.class)
+            .addFilterBefore(securityCandidateFilter, BasicAuthenticationFilter.class)
             .build();
     }
     
