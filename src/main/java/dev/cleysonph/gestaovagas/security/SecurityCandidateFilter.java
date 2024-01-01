@@ -44,7 +44,7 @@ public class SecurityCandidateFilter extends OncePerRequestFilter {
                     var roles = decodedJWT.getClaim("roles")
                         .asList(String.class)
                         .stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .map(role -> new SimpleGrantedAuthority(role))
                         .toList();
                     var auth = new UsernamePasswordAuthenticationToken(
                         decodedJWT.getSubject(), 

@@ -42,7 +42,7 @@ public class AuthCandidateUseCase {
             .withIssuer("javagas")
             .withSubject(candidate.getId().toString())
             .withExpiresAt(expiresIn)
-            .withClaim("roles", List.of("candidate"))
+            .withClaim("roles", List.of("ROLE_CANDIDATE"))
             .sign(Algorithm.HMAC256(secretKey));
         return new AuthCandidateResponseDTO(token, expiresIn.toEpochMilli());
     }

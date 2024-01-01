@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,13 +35,21 @@ public class SecurityFilter extends OncePerRequestFilter {
             
             if (isTokenPresent(authorizationHeader)) {
                 var token = authorizationHeader.replace(TOKEN_PREFIX, "");
-                var subject = jwtProvider.validateToken(token);
+                var decodedJWT = jwtProvider.validateToken(token);
     
-                if (subject.isEmpty()) {
+                if (decodedJWT == null) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 } else {
-                    request.setAttribute("company_id", subject);
-                    var authentication = new UsernamePasswordAuthenticationToken(subject, null, AuthorityUtils.NO_AUTHORITIES);
+                    request.setAttribute("company_id", decodedJWT.getSubject());
+                    var roles = decodedJWT.getClaim("roles").asList(String.class)
+                        .stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
+                    var authentication = new UsernamePasswordAuthenticationToken(
+                        decodedJWT.getSubject(), 
+                        null, 
+                        roles
+                    );
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
